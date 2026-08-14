@@ -1,2 +1,2 @@
 # Data-Science-projects
-Projects completed using Python, R, SQL and SAS.
+Projects completed using Python, R, SQL.
