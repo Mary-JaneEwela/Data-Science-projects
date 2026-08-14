@@ -1,0 +1,161 @@
+---
+title: "Investigating the 2021 Census Dataset"
+author: "Mary-Jane Masagbor "
+date: "2025-11-05"
+format:
+  html:
+    toc: true
+    code-fold: true
+    code-link: true
+    number-sections: true
+---
+
+## Introduction
+
+```{r}
+#| label: Loading Packages
+#| include: false
+
+library(tidyverse)
+library(ggplot2)
+library(ggthemes)
+```
+
+```{r}
+#| label: Loading the data
+#| include: false
+
+data <- read_csv("C:/Users/HP/Downloads/data.csv")
+```
+
+Analyzing population data provides valuable insights into the social and economic structures that define contemporary societies. This report examines the 2021 England Household Census dataset to explore relationships between demographic factors such as age, gender, and ethnicity, alongside education levels and income distribution. Utilizing ggplot2 for data visualization, the study uncovers patterns that reveal how these variables collectively influence economic outcomes and social characteristics.
+
+The key focus lies in understanding how income evolves with age, the role of educational attainment in shaping earnings, and the presence of gender and ethnic disparities within these dynamics. By presenting the data visually, this report aims to communicate complex socioeconomic trends clearly and effectively, offering a nuanced perspective on the diverse factors that contribute to the lived experience of households across England.
+
+## Running Code
+
+# ScatterPlots
+
+```{r}
+library(tidyr)
+data_clean_any <- data %>% drop_na()
+na.rm = TRUE
+?data
+ggplot(data, aes(x = Age, y = INC)) +
+  geom_point(alpha = 0.6, na.rm = TRUE) +
+  labs(title = "Relationship between Age and Income in England (2021)",
+       x = "Age", y = "Annual Income (£)") +
+  theme_minimal()
+```
+
+The scatterplot displays the relationship between individuals’ ages and their annual income levels. A general upward trend can be observed, where income tends to rise as age increases, reflecting the accumulation of work experience and career advancement over time. Mid-aged individuals typically earn the highest incomes, after which earnings appear to stabilise or decline slightly, possibly due to retirement or a transition to part-time employment. The dispersion of data points across all age groups suggests that income variation is influenced by additional factors, such as educational attainment, occupation type, and employment status, rather than age alone. This relationship highlights the complex nature of income distribution within the population.
+
+```{r}
+ggplot(data, aes(x = Age, y = INC)) +
+  geom_point(alpha = 0.4, color = "steelblue",na.rm = TRUE) +
+  geom_smooth(method = "lm", se = TRUE, color = "darkred", linetype = "dashed", na.rm = TRUE) +
+  labs(
+    title = "Relationship between Age and Annual Income",
+    subtitle = "Income tends to increase with age, peaking in middle adulthood",
+    x = "Age (years)",
+    y = "Annual Income (£)"
+  ) +
+  theme_minimal()
+```
+
+The scatterplot illustrates the relationship between age and annual income, with a fitted linear regression line highlighting the overall pattern. The upward slope of the trend line indicates that income generally rises with age, particularly during early and middle adulthood, which is consistent with the accumulation of skills, experience, and career progression over time. However, the relationship begins to flatten at older ages, suggesting a possible plateau or reduction in earnings, potentially due to retirement or reduced working hours. The wide spread of data points also reveals significant income variability across all age groups, implying that factors such as education, occupation, and employment type may interact with age to influence earnings outcomes.
+
+# Barchats
+
+```{r}
+ggplot(data, aes(x = `Highest Ed`, fill = factor(Female))) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Education Level by Gender",
+    x = "Highest Education Level",
+    y = "Count",
+    fill = "Gender (0 = Female, 1 = Male)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+The bar chart compares the distribution of the highest education levels between males and females. From the visualization, it is evident that educational attainment varies by gender, with both groups represented across all education categories. However, the differences in bar heights across levels suggest potential disparities in access to or completion of higher education. For example, one gender may be more concentrated in lower qualification levels, while the other shows higher representation in advanced degrees or university qualifications. This pattern could reflect broader social, economic, or cultural influences affecting educational outcomes, such as gendered expectations, labour market structures, or historical access to education.
+
+
+```{r}
+ggplot(data, aes(x = Eth, fill = Mar_Stat)) +
+  geom_bar(position = "fill") +
+  labs(
+    title = "Marital Status Distribution by Ethnicity",
+    x = "Ethnicity",
+    y = "Proportion",
+    fill = "Marital Status"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+The visualization shows the proportional distribution of marital status across different ethnic groups. Each bar represents an ethnic category, divided by marital status proportions, allowing for comparison independent of group size. The chart reveals variation in marital patterns among ethnicities — for instance, some groups may display a higher proportion of married individuals, while others show greater representation of single or separated individuals. These differences could stem from cultural norms, socioeconomic factors, or demographic trends such as age structure within each ethnic group. Overall, the visualization highlights how marital status is not uniformly distributed across ethnic lines, suggesting the presence of social and cultural diversity within the population.
+
+# Box Plots
+
+```{r}
+ggplot(data, aes(x = `Highest Ed`, y = INC, fill = `Highest Ed`)) +
+  geom_boxplot(outlier.color = "red", alpha = 0.7, na.rm = TRUE) +
+  labs(
+    title = "Income Distribution by Highest Education Level",
+    x = "Highest Education Level",
+    y = "Annual Income (£)",
+    caption = "Source: 2021 England Household Census"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+The box plot displays how annual income varies across different levels of educational attainment. It shows a clear positive association between education and income, with individuals who have attained higher qualifications generally earning more. The spread of income also tends to widen at higher education levels, suggesting greater variability among highly educated individuals — possibly reflecting diverse career paths and earning potentials. In contrast, lower education levels correspond to narrower income ranges and lower median earnings, reinforcing the economic advantage associated with education. Overall, this pattern underscores the role of educational attainment as a key determinant of income inequality within the population.
+
+
+```{r}
+ggplot(data, aes(x = factor(Female, labels = c("Female", "Male")), y = INC, fill = factor(Female))) +
+geom_boxplot(outlier.color = "red", alpha = 0.7, na.rm = TRUE) +
+labs(
+title = "Income Distribution by Gender",
+x = "Gender",
+y = "Annual Income (£)",
+caption = "Source: 2021 England Household Census"
+) +
+scale_fill_manual(values = c("#FF69B4", "#87CEFA")) +
+theme_minimal() +
+theme(
+plot.title = element_text(size = 14, face = "bold"),
+legend.position = "none"
+)
+```
+
+The box plot compares annual income between males and females. It reveals that, on average, males tend to earn more than females, as reflected by the higher median income and wider upper range in the male category. Female incomes, while showing less variability, cluster more closely around lower income brackets. This pattern suggests the persistence of a gender pay gap within the dataset, potentially linked to differences in occupational roles, working hours, or access to higher-paying positions. Although outliers exist in both groups, the overall trend highlights a structural disparity in income distribution between genders.
+
+
+## Summary and Discussion
+
+This visual investigation explores patterns within the 2021 England Household Census dataset, focusing on demographic, educational, and economic dimensions. Using ggplot2, the analysis highlights key social and economic relationships across age, education, ethnicity, and gender.
+The first visualization examining Age and Income reveals a clear upward trajectory in earnings through early and middle adulthood, followed by a gradual decline in later years. This pattern aligns with established income lifecycle trends, where financial gains peak during prime working ages before tapering off toward retirement.
+When a linear model is fitted, the positive correlation between age and income becomes even more apparent. The smoothed line reinforces the observation that income potential typically increases with experience and career progression before reaching a plateau. This relationship underlines how age remains a strong predictor of economic stability within the dataset.
+
+Gender-based analysis further exposes disparities. The Education Level by Gender plot shows similar participation across most qualification levels, yet subtle imbalances persist, with men slightly overrepresented at the higher educational tiers.
+These educational differences carry through to income outcomes, as shown in the Income Distribution by Gender plot, where men exhibit both higher median incomes and greater variability. This suggests a continued gender pay gap that may stem from occupational segregation or unequal access to higher-paying roles.
+The Marital Status by Ethnicity visualization introduces a cultural perspective, illustrating how marital patterns differ across ethnic groups. Some ethnicities demonstrate a higher proportion of married individuals, whereas others display more diversity in relationship status. These distinctions may reflect broader social norms, migration backgrounds, or community-specific demographic structures.
+
+Education again emerges as a powerful determinant of financial outcomes in the Income by Highest Education Level plot. Individuals with higher qualifications display significantly greater earnings, confirming the long-standing association between academic attainment and economic opportunity. Income variability within each group also suggests that education, while important, interacts with other factors such as occupation, gender, and household composition.
+Collectively, these analyses present a coherent story about socioeconomic patterns in modern England. Age, gender, and education consistently appear as influential determinants of income and social structure. The visual approach not only uncovers disparities but also conveys complex relationships in an accessible form, illustrating the power of data visualization for uncovering meaningful insights from population data.
+
+
+## Conclusion
+
+This investigation of the 2021 England Household Census highlights how age, gender, education, and ethnicity shape income and social structure. The analysis shows that income generally rises with age before stabilizing in later years, while higher educational attainment strongly predicts higher earnings. Gender-based disparities persist, with men displaying higher median incomes and broader variability. Ethnic differences in marital status further reveal the cultural diversity within the population.
+
+Overall, the findings reinforce the enduring impact of education and gender on economic outcomes and suggest that social and demographic factors continue to interact in shaping household well-being. The visual exploration demonstrates how data-driven storytelling can uncover meaningful patterns and provide a clear, evidence-based understanding of societal trends.
