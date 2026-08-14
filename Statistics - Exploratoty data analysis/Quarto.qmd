@@ -1,0 +1,130 @@
+---
+title: "Exploratory Data Analysis of the Malignant Melanoma dataset"
+author: "Mary-Jane Masagbor "
+date: "2026-01-05"
+format:
+  html:
+    toc: true
+    code-fold: true
+    code-link: true
+    number-sections: true
+---
+
+
+
+# Introduction: Loading Dataset
+
+```{r}
+library(tidyverse)
+mel <- read_csv("C:/Users/HP/Downloads/melanoma.csv")
+View(mel)
+mel <- mel %>% select(-1)
+head(mel)
+
+mel <- mel %>%
+  mutate(status = factor(status, levels = c(1,2,3),
+                    labels = c("Died (melanoma)", "Alive", "Died (other)")),
+    sex = factor(sex, levels = c(0,1), labels = c("Female", "Male")),
+    ulcer = factor(ulcer, levels = c(0,1), labels = c("Absent", "Present"))
+
+str(mel)
+summary(mel)    
+
+```
+
+# Summary Statistics
+
+## Numeric summaries
+
+```{r}
+num_vars <- mel %>% select(time, age, year, thickness)
+
+num_summary <- num_vars %>%
+  summarise(
+    n = n(),
+    time_mean = mean(time), time_sd = sd(time), time_min = min(time),
+    time_q1 = quantile(time, 0.25), time_median = median(time),
+    time_q3 = quantile(time, 0.75), time_max = max(time),
+
+    age_mean = mean(age), age_sd = sd(age), age_min = min(age),
+    age_q1 = quantile(age, 0.25), age_median = median(age),
+    age_q3 = quantile(age, 0.75), age_max = max(age),
+
+    year_mean = mean(year), year_sd = sd(year), year_min = min(year),
+    year_q1 = quantile(year, 0.25), year_median = median(year),
+    year_q3 = quantile(year, 0.75), year_max = max(year),
+
+    thick_mean = mean(thickness), thick_sd = sd(thickness),
+    thick_min = min(thickness),
+    thick_q1 = quantile(thickness, 0.25),
+    thick_median = median(thickness),
+    thick_q3 = quantile(thickness, 0.75),
+    thick_max = max(thickness)
+  )
+
+num_summary
+```
+
+## Categorical summaries
+
+```{r}
+table(mel$status)
+prop.table(table(mel$status))
+
+table(mel$sex)
+prop.table(table(mel$sex))
+
+table(mel$ulcer)
+prop.table(table(mel$ulcer))
+```
+
+# Graphical summaries
+
+## Numeric variables: histogram + boxplot
+
+```{r}
+ggplot(mel, aes(time)) + geom_histogram(bins = 25) + theme_minimal()
+ggplot(mel, aes(y = time)) + geom_boxplot() + theme_minimal()
+
+ggplot(mel, aes(age)) + geom_histogram(bins = 25) + theme_minimal()
+ggplot(mel, aes(y = age)) + geom_boxplot() + theme_minimal()
+
+ggplot(mel, aes(year)) + geom_histogram(bins = 16) + theme_minimal()
+ggplot(mel, aes(y = year)) + geom_boxplot() + theme_minimal()
+
+ggplot(mel, aes(thickness)) + geom_histogram(bins = 25) + theme_minimal()
+ggplot(mel, aes(y = thickness)) + geom_boxplot() + theme_minimal()
+```
+
+
+```{r}
+1 + 1
+```
+
+```{r}
+1 + 1
+```
+
+
+```{r}
+1 + 1
+```
+
+```{r}
+1 + 1
+```
+
+```{r}
+1 + 1
+```
+
+```{r}
+1 + 1
+```
+
+
+
+
+
+
+
